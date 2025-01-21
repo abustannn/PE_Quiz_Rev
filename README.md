@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -14,7 +13,7 @@
 
         .navbar {
             background-color: #4267B2;
-            color: white;
+            color: beige;
             padding: 10px 20px;
             display: flex;
             justify-content: space-between;
