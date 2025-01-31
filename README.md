@@ -9,6 +9,7 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
             padding: 20px;
+            text-align: center;
         }
         .quiz-container {
             max-width: 600px;
@@ -40,55 +41,96 @@
             background-color: red !important;
             color: white;
         }
+        #progress {
+            margin: 10px 0;
+        }
+        #result {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="quiz-container" id="quiz"></div>
+    <div class="quiz-container">
+        <div id="progress"></div>
+        <div id="question-container"></div>
+        <div id="options-container"></div>
+        <div id="result"></div>
+        <button id="restart" style="display: none;">Take Another Quiz</button>
+    </div>
     <script>
-        const questions = [
+        let questions = [
             { question: "The body's capacity to function effectively, allowing you to be healthy and perform daily activities.", options: ["Wellness", "Physical fitness", "Flexibility", "Muscular endurance"], answer: "Physical fitness" },
             { question: "The act of consistently practicing healthy habits to achieve better physical and mental well-being.", options: ["Wellness", "Physical fitness", "Training principle", "Coordination"], answer: "Wellness" },
-            { question: "The ability to perform exercises at moderate-to-vigorous intensity for a prolonged time.", options: ["Power", "Muscular strength", "Cardiovascular endurance", "Reaction time"], answer: "Cardiovascular endurance" },
-            { question: "The ability of muscles to exert force or lift heavy weights.", options: ["Agility", "Muscular strength", "Speed", "Balance"], answer: "Muscular strength" },
-            { question: "The ability of muscles to sustain exercise for an extended period.", options: ["Body composition", "Flexibility", "Muscular endurance", "Coordination"], answer: "Muscular endurance" },
-            { question: "The ability to move joints and muscles through a full range of motion.", options: ["Balance", "Reaction time", "Coordination", "Flexibility"], answer: "Flexibility" },
-            { question: "The body's ratio of fat mass to fat-free mass, such as muscle and bone.", options: ["Cardiovascular endurance", "Body composition", "Speed", "Strength"], answer: "Body composition" },
-            { question: "The ability to change direction or position quickly and with light movement.", options: ["Balance", "Agility", "Coordination", "Muscular endurance"], answer: "Agility" },
-            { question: "The ability to keep an upright posture while standing still or moving.", options: ["Balance", "Power", "Agility", "Reaction time"], answer: "Balance" },
-            { question: "The ability to integrate senses with muscles to produce smooth, harmonious movements.", options: ["Coordination", "Speed", "Power", "Flexibility"], answer: "Coordination" },
-            { question: "The ability to cover a distance in a short period.", options: ["Speed", "Strength", "Agility", "Balance"], answer: "Speed" },
-            { question: "The ability of muscles to release maximum force in the shortest time.", options: ["Flexibility", "Speed", "Power", "Endurance"], answer: "Power" },
-            { question: "The amount of time it takes to start moving after receiving a signal.", options: ["Speed", "Coordination", "Power", "Reaction time"], answer: "Reaction time" },
-            { question: "Fitness gained from training is lost when exercise is stopped.", options: ["Overload", "Specificity", "Reversibility", "Coordination"], answer: "Reversibility" },
-            { question: "A questionnaire used to assess an individual's readiness for physical activity.", options: ["FITT Principle", "Movement Principles", "PAR-Q Test", "Skill-Related Fitness"], answer: "PAR-Q Test" }
-        ]; // Add the remaining 30 questions
+            { question: "The ability to perform exercises at moderate-to-vigorous intensity for a prolonged time.", options: ["Power", "Muscular strength", "Cardiovascular endurance", "Reaction time"], answer: "Cardiovascular endurance" }
+        ]; // Add all 45 questions here
 
-        const quizContainer = document.getElementById("quiz");
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
 
-        questions.forEach((q, index) => {
-            const questionElement = document.createElement("div");
-            questionElement.classList.add("question");
-            questionElement.innerText = `${index + 1}. ${q.question}`;
-            
-            const optionsContainer = document.createElement("div");
-            optionsContainer.classList.add("options");
-            
-            q.options.forEach(option => {
-                const button = document.createElement("button");
+        let currentQuestionIndex = 0;
+        let score = 0;
+        shuffleArray(questions);
+
+        function displayQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                showResults();
+                return;
+            }
+
+            let questionData = questions[currentQuestionIndex];
+            document.getElementById("progress").innerText = `Question ${currentQuestionIndex + 1} of ${questions.length}`;
+            document.getElementById("question-container").innerText = questionData.question;
+
+            let optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+            questionData.options.forEach(option => {
+                let button = document.createElement("button");
                 button.innerText = option;
-                button.addEventListener("click", () => {
-                    if (option === q.answer) {
-                        button.classList.add("correct");
-                    } else {
-                        button.classList.add("wrong");
-                    }
-                });
+                button.addEventListener("click", () => checkAnswer(option, button));
                 optionsContainer.appendChild(button);
             });
-            
-            quizContainer.appendChild(questionElement);
-            quizContainer.appendChild(optionsContainer);
+        }
+
+        function checkAnswer(selected, button) {
+            let correctAnswer = questions[currentQuestionIndex].answer;
+            if (selected === correctAnswer) {
+                button.classList.add("correct");
+                score++;
+            } else {
+                button.classList.add("wrong");
+            }
+            setTimeout(() => {
+                currentQuestionIndex++;
+                displayQuestion();
+            }, 1000);
+        }
+
+        function showResults() {
+            let percentage = (score / questions.length) * 100;
+            let resultText = `You scored ${score} out of ${questions.length} (${percentage.toFixed(2)}%)`;
+            let resultContainer = document.getElementById("result");
+            resultContainer.innerText = resultText;
+            resultContainer.style.color = percentage >= 75 ? "green" : "red";
+            resultContainer.innerHTML += `<br>${percentage >= 75 ? "Congratulations! You passed!" : "Try again! You failed."}`;
+            document.getElementById("restart").style.display = "block";
+        }
+
+        document.getElementById("restart").addEventListener("click", () => {
+            currentQuestionIndex = 0;
+            score = 0;
+            shuffleArray(questions);
+            document.getElementById("result").innerHTML = "";
+            document.getElementById("restart").style.display = "none";
+            displayQuestion();
         });
+
+        displayQuestion();
     </script>
 </body>
 </html>
