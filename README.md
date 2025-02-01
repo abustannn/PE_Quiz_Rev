@@ -120,7 +120,25 @@
         <div class="question-list" id="question-list"></div>
     </div>
     <script>
-        let questions = [];
+        let questions = [
+    { question: "The body's capacity to function effectively, allowing you to be healthy and perform daily activities.", options: ["Physical fitness", "Wellness", "Flexibility", "Muscular endurance"], answer: "Physical fitness" },
+    { question: "The act of consistently practicing healthy habits to achieve better physical and mental well-being.", options: ["Wellness", "Physical fitness", "Training principle", "Coordination"], answer: "Wellness" },
+    { question: "The ability to perform exercises at moderate-to-vigorous intensity for a prolonged time.", options: ["Power", "Muscular strength", "Cardiovascular endurance", "Reaction time"], answer: "Cardiovascular endurance" },
+    { question: "The ability of muscles to exert force or lift heavy weights.", options: ["Agility", "Muscular strength", "Speed", "Balance"], answer: "Muscular strength" },
+    { question: "The ability of muscles to sustain exercise for an extended period.", options: ["Body composition", "Flexibility", "Muscular endurance", "Coordination"], answer: "Muscular endurance" },
+    { question: "The ability to move joints and muscles through a full range of motion.", options: ["Balance", "Reaction time", "Coordination", "Flexibility"], answer: "Flexibility" },
+    { question: "The body's ratio of fat mass to fat-free mass, such as muscle and bone.", options: ["Cardiovascular endurance", "Body composition", "Speed", "Strength"], answer: "Body composition" },
+    { question: "The ability to change direction or position quickly and with light movement.", options: ["Balance", "Agility", "Coordination", "Muscular endurance"], answer: "Agility" },
+    { question: "The ability to keep an upright posture while standing still or moving.", options: ["Balance", "Power", "Agility", "Reaction time"], answer: "Balance" },
+    { question: "The ability to integrate senses with muscles to produce smooth, harmonious movements.", options: ["Coordination", "Speed", "Power", "Flexibility"], answer: "Coordination" },
+    { question: "The ability to cover a distance in a short period.", options: ["Speed", "Strength", "Agility", "Balance"], answer: "Speed" },
+    { question: "The ability of muscles to release maximum force in the shortest time.", options: ["Flexibility", "Speed", "Power", "Endurance"], answer: "Power" },
+    { question: "The amount of time it takes to start moving after receiving a signal.", options: ["Speed", "Coordination", "Power", "Reaction time"], answer: "Reaction time" },
+    { question: "The training must be customized to the needs of the sport to improve fitness.", options: ["Overload", "Specificity", "Progression", "Reversibility"], answer: "Specificity" },
+    { question: "Only by training more than usual can fitness be improved.", options: ["Progression", "Reversibility", "Overload", "Specificity"], answer: "Overload" },
+    { question: "Starting slow and gradually increasing the amount of exercise while maintaining overload.", options: ["Progression", "Reversibility", "Overload", "Specificity"], answer: "Progression" },
+    { question: "Fitness gained from training is lost when exercise is stopped.", options: ["Overload", "Specificity", "Reversibility", "Coordination"], answer: "Reversibility" }
+];
         for (let i = 1; i <= 45; i++) {
             questions.push({ question: `Question ${i}?`, options: ["A", "B", "C", "D"], answer: "A" });
         }
