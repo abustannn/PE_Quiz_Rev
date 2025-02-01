@@ -36,12 +36,14 @@
             font-size: 22px;
             font-weight: bold;
             color: white;
+            display: none;
         }
         .options-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin-top: 15px;
+            display: none;
         }
         .option-button {
             width: 80%;
@@ -66,8 +68,7 @@
         .wrong {
             background-color: red !important;
         }
-        #next-btn {
-            display: none;
+        #next-btn, #start-btn {
             margin-top: 20px;
             padding: 10px 20px;
             font-size: 18px;
@@ -87,6 +88,7 @@
             color: white;
             font-size: 14px;
             width: 150px;
+            display: none;
         }
         .current {
             color: gold;
@@ -107,11 +109,12 @@
     <div class="quiz-container">
         <div id="username-container">
             <input type="text" id="username" placeholder="Enter your username" required>
+            <button id="start-btn">Start Quiz</button>
         </div>
         <div id="progress"></div>
         <div class="question-box" id="question-container"></div>
         <div class="options-container" id="options-container"></div>
-        <button id="next-btn">Next</button>
+        <button id="next-btn" style="display: none;">Next</button>
         <div id="result"></div>
         <button id="restart" style="display: none;">Play Again</button>
         <div class="question-list" id="question-list"></div>
@@ -125,6 +128,19 @@
         let score = 0;
         let username = "";
         
+        document.getElementById("start-btn").addEventListener("click", () => {
+            username = document.getElementById("username").value;
+            if (!username.trim()) {
+                alert("Please enter your username.");
+                return;
+            }
+            document.getElementById("username-container").style.display = "none";
+            document.getElementById("question-container").style.display = "block";
+            document.getElementById("options-container").style.display = "flex";
+            document.getElementById("question-list").style.display = "block";
+            displayQuestion();
+        });
+        
         document.getElementById("next-btn").addEventListener("click", () => {
             currentQuestionIndex++;
             if (currentQuestionIndex < questions.length) {
@@ -135,15 +151,6 @@
         });
         
         function displayQuestion() {
-            if (currentQuestionIndex === 0) {
-                username = document.getElementById("username").value;
-                if (!username) {
-                    alert("Please enter your username.");
-                    return;
-                }
-                document.getElementById("username-container").style.display = "none";
-            }
-            
             let questionData = questions[currentQuestionIndex];
             document.getElementById("question-container").innerText = questionData.question;
             
@@ -180,8 +187,6 @@
             }
             document.getElementById("question-list").innerHTML = list;
         }
-        
-        displayQuestion();
     </script>
 </body>
 </html>
