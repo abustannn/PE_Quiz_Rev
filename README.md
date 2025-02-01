@@ -26,6 +26,7 @@
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
             text-align: center;
             border: 5px solid gold;
+            position: relative;
         }
         .question-box {
             background: #003366;
@@ -36,149 +37,150 @@
             font-weight: bold;
             color: white;
         }
-        .options button {
-            display: block;
-            width: 100%;
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 15px;
+        }
+        .option-button {
+            width: 80%;
             padding: 15px;
             margin: 10px 0;
             border: none;
-            border-radius: 8px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             background-color: #004d99;
             color: white;
             transition: all 0.3s;
         }
-        .options button:hover {
+        .option-button:hover {
             background-color: gold;
             color: black;
         }
         .correct {
             background-color: green !important;
-            color: white;
         }
         .wrong {
             background-color: red !important;
-            color: white;
         }
-        #progress {
-            font-size: 20px;
-            margin-bottom: 15px;
-            font-weight: bold;
-        }
-        #result {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 10px;
-            color: white;
-        }
-        #restart {
+        #next-btn {
             display: none;
             margin-top: 20px;
-            padding: 15px 30px;
-            font-size: 22px;
-            font-weight: bold;
+            padding: 10px 20px;
+            font-size: 18px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
             background-color: gold;
             color: black;
-            transition: 0.3s;
         }
-        #restart:hover {
-            background-color: #ffcc00;
+        .question-list {
+            position: absolute;
+            right: -180px;
+            top: 10px;
+            background: #003366;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            width: 150px;
+        }
+        .current {
+            color: gold;
+            font-weight: bold;
+        }
+        #username-container {
+            margin-bottom: 15px;
+        }
+        #username {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: none;
         }
     </style>
 </head>
 <body>
     <div class="quiz-container">
-        <div id="progress"></div>
-        <div class="question-box">
-            <div id="question-container"></div>
+        <div id="username-container">
+            <input type="text" id="username" placeholder="Enter your username" required>
         </div>
-        <div id="options-container"></div>
+        <div id="progress"></div>
+        <div class="question-box" id="question-container"></div>
+        <div class="options-container" id="options-container"></div>
+        <button id="next-btn">Next</button>
         <div id="result"></div>
-        <button id="restart">Play Again</button>
+        <button id="restart" style="display: none;">Play Again</button>
+        <div class="question-list" id="question-list"></div>
     </div>
     <script>
-        let questions = [
-            { question: "The body's capacity to function effectively, allowing you to be healthy and perform daily activities.", options: ["Wellness", "Physical fitness", "Flexibility", "Muscular endurance"], answer: "Physical fitness" },
-            { question: "The act of consistently practicing healthy habits to achieve better physical and mental well-being.", options: ["Wellness", "Physical fitness", "Training principle", "Coordination"], answer: "Wellness" }
-        ]; // Ensure there are 45 questions in the array
-
-        function shuffleArray(array) {
-            for (let i = array.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [array[i], array[j]] = [array[j], array[i]];
-            }
+        let questions = [];
+        for (let i = 1; i <= 45; i++) {
+            questions.push({ question: `Question ${i}?`, options: ["A", "B", "C", "D"], answer: "A" });
         }
-
-        let selectedQuestions = [];
-        function selectRandomQuestions() {
-            shuffleArray(questions);
-            selectedQuestions = questions.slice(0, 45); // Ensures 45 questions per quiz
-        }
-
         let currentQuestionIndex = 0;
         let score = 0;
-        selectRandomQuestions();
-
-        function displayQuestion() {
-            if (currentQuestionIndex >= selectedQuestions.length) {
+        let username = "";
+        
+        document.getElementById("next-btn").addEventListener("click", () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                displayQuestion();
+            } else {
                 showResults();
-                return;
             }
-
-            let questionData = selectedQuestions[currentQuestionIndex];
-            document.getElementById("progress").innerText = `Question ${currentQuestionIndex + 1} of ${selectedQuestions.length}`;
+        });
+        
+        function displayQuestion() {
+            if (currentQuestionIndex === 0) {
+                username = document.getElementById("username").value;
+                if (!username) {
+                    alert("Please enter your username.");
+                    return;
+                }
+                document.getElementById("username-container").style.display = "none";
+            }
+            
+            let questionData = questions[currentQuestionIndex];
             document.getElementById("question-container").innerText = questionData.question;
-
+            
             let optionsContainer = document.getElementById("options-container");
             optionsContainer.innerHTML = "";
             questionData.options.forEach(option => {
                 let button = document.createElement("button");
+                button.classList.add("option-button");
                 button.innerText = option;
                 button.addEventListener("click", () => checkAnswer(option, button));
                 optionsContainer.appendChild(button);
             });
+            document.getElementById("next-btn").style.display = "none";
+            updateQuestionList();
         }
-
+        
         function checkAnswer(selected, button) {
-            let correctAnswer = selectedQuestions[currentQuestionIndex].answer;
-            if (selected === correctAnswer) {
-                button.classList.add("correct");
-                score++;
-            } else {
-                button.classList.add("wrong");
-            }
-            setTimeout(() => {
-                currentQuestionIndex++;
-                displayQuestion();
-            }, 1000);
+            let correctAnswer = questions[currentQuestionIndex].answer;
+            button.classList.add(selected === correctAnswer ? "correct" : "wrong");
+            document.getElementById("next-btn").style.display = "block";
+            if (selected === correctAnswer) score++;
         }
-
+        
         function showResults() {
-            let percentage = (score / selectedQuestions.length) * 100;
-            let resultText = `You scored ${score} out of ${selectedQuestions.length} (${percentage.toFixed(2)}%)`;
-            let resultContainer = document.getElementById("result");
-            resultContainer.innerText = resultText;
-            resultContainer.style.backgroundColor = percentage >= 75 ? "green" : "red";
-            resultContainer.innerHTML += `<br>${percentage >= 75 ? "Congratulations! You passed!" : "Try again! You failed."}`;
-            document.getElementById("restart").style.display = "block";
+            let percentage = (score / questions.length) * 100;
+            let resultText = `${username}'s Score: ${score}/45 (${percentage.toFixed(2)}%)`;
+            document.getElementById("result").innerText = resultText;
         }
-
-        document.getElementById("restart").addEventListener("click", () => {
-            currentQuestionIndex = 0;
-            score = 0;
-            selectRandomQuestions();
-            document.getElementById("result").innerHTML = "";
-            document.getElementById("restart").style.display = "none";
-            displayQuestion();
-        });
-
+        
+        function updateQuestionList() {
+            let list = "";
+            for (let i = 0; i < questions.length; i++) {
+                list += `<div class="${i === currentQuestionIndex ? "current" : ""}">Question ${i+1}</div>`;
+            }
+            document.getElementById("question-list").innerHTML = list;
+        }
+        
         displayQuestion();
     </script>
 </body>
